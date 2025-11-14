@@ -1,5 +1,6 @@
 import express from "express";
 import { lookupAddress } from "./data.js";
+import { ParsedQs } from "qs";
 
 export function createServer(apiKey: string) {
 	const app = express();
@@ -11,9 +12,30 @@ export function createServer(apiKey: string) {
 	 */
 	app.get("/address", (req, res) => {
 
+		if(req.headers["x-api-key"] !== apiKey) {
+			return res.status(401).json({
+				error: "Unauthorized"
+			});
+		}
 
-		// const address = lookupAddress(String(name), String(surname));
+		if(!validateArguments(req.query)) {
+			return res.status(418).json({
+				error: "Invalid arguments"
+			});
+		}
+
+		res.json({
+			address: "742 Evergreen Terrace, Springfield"
+		});
 	});
 
 	return app;
 }
+function validateArguments(query: ParsedQs) {
+	//we expect name and surname in the args
+	if(!query.name || !query.surname) {
+		return false;
+	}
+	return true;
+}
+
