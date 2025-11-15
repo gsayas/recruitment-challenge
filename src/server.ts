@@ -24,13 +24,12 @@ export function createServer(apiKey: string) {
 			});
 		}
 
-		res.json({
-			address: "742 Evergreen Terrace, Springfield"
-		});
+		res.json(lookupAddress(req.query?.name as string, req.query.surname as string));
 	});
 
 	return app;
 }
+
 function validateArguments(query: ParsedQs) {
 	//we expect name and surname in the args
 	if(!query.name || !query.surname) {
@@ -38,4 +37,9 @@ function validateArguments(query: ParsedQs) {
 	}
 	return true;
 }
+
+// Default export for Vercel serverless functions
+const apiKey = process.env.API_KEY || "";
+const app = createServer(apiKey);
+export default app;
 
